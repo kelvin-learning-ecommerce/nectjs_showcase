@@ -1,0 +1,1 @@
+export * as gameListAction from "./gameListAction";

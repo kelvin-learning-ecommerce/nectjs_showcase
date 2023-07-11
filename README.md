@@ -12,6 +12,11 @@ yarn dev
 pnpm dev
 ```
 
+yarn add redux // Adds redux as a dependency
+yarn add react-redux // Adds react-redux to our project
+yarn add axios // Axios will be used to make API calls
+yarn add redux-thunk // Adds redux-thunk
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
