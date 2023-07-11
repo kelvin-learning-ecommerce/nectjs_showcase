@@ -17,7 +17,7 @@ const GameList: React.FC = () => {
         "https://api.rawg.io/api/games?page=1&page_size=20&key=02ef6ba5d13444ee86bad607e8bce3f4"
       )
       .then((res) => {
-        dispatch(getGameListData(res.data["results"]));
+        dispatch(getGameListData(res.data));
         console.log(res.data);
       });
   };
