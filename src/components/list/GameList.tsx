@@ -1,51 +1,47 @@
-import axios from "axios";
-import GameListItem from "./GameListItem";
-import { useSelector, useDispatch } from "react-redux";
-import { getGameListData } from "@/state/action/gameListAction";
-import React, { useState, useEffect } from "react";
-import Loader from "../loader";
+import axios, { AxiosRequestConfig } from "axios";
+import useAxios from "axios-hooks";
+import { GetStaticProps } from "next";
+import { serializeResponse } from "@/libs/serializeResponse";
 
-interface GameListProps {}
+const GameList = () => {
+  const [{ data, loading, error }, refetch] = useAxios<PokemonList>(
+    {
+      baseURL: "https://pokeapi.co",
+      url: "/api/v2/pokemon?limit=10&offset=0",
+    },
+    {
+      manual: true,
+    }
+  );
 
-const GameList: React.FC = () => {
-  const gameListData = useSelector((state: any) => state?.data.gameListData);
-  const dispatch = useDispatch();
-
-  const fetchGameListData = async () => {
-    await axios
-      .get(
-        "https://api.rawg.io/api/games?page=1&page_size=20&key=02ef6ba5d13444ee86bad607e8bce3f4"
-      )
-      .then((res) => {
-        dispatch(getGameListData(res.data));
-        console.log(res.data);
-      });
-  };
-
-  useEffect(() => {
-    fetchGameListData();
-  }, []);
+  // refetch();
 
   return (
-    <>
-      <h1>Footballers:</h1>
-      {!gameListData && gameListData == undefined ? (
-        <>
-          <Loader />
-        </>
-      ) : (
-        gameListData.map((individualPlayerData: any) => {
-          return (
-            <>
-              <h3>Name: {individualPlayerData.name}</h3>
-              <h4>released date: {individualPlayerData.released}</h4>
-              <h4>metacritic score: {individualPlayerData.metacritic}</h4>
-            </>
-          );
-        })
-      )}
-    </>
+    <div>
+      <h1>Users Page</h1>
+      <button onClick={() => refetch()}>Load Users</button>
+      {loading && <p>Loading...</p>}
+      {!!error && <p>{error.message}</p>}
+      {!!data && <pre>{JSON.stringify(data, null, 4)}</pre>}
+    </div>
   );
 };
 
 export default GameList;
+
+export const getServerSideProps: GetStaticProps = async () => {
+  // axios config, must be exactly the same as the one used in useAxios hook so that it creates the same key.
+  const config: AxiosRequestConfig = {
+    baseURL: "https://pokeapi.co",
+    url: "/api/v2/pokemon?limit=10&offset=0",
+  };
+  // execute the http request
+  const response = await axios(config);
+
+  // serialize the response
+  return {
+    props: {
+      __CACHE__: [serializeResponse(config, response)],
+    },
+  };
+};

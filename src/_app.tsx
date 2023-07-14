@@ -1,15 +1,11 @@
+// pages/_app.tsx
+import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { Provider } from "react-redux";
-
-// Import global store
-import { store } from "@/state/stores/store";
+import { loadCache } from "axios-hooks";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <Provider store={store}>
-      <Component {...pageProps} />
-    </Provider>
-  );
+  loadCache(pageProps.__CACHE__ ?? []);
+  return <Component {...pageProps} />;
 }
 
 export default MyApp;
